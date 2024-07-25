@@ -56,15 +56,15 @@ export function ChartBlock() {
 
   const filterData = useCallback(() => {
     if (!originalChartData) return;
-
+  
     const min = minValue === '' ? -Infinity : Number(minValue);
     const max = maxValue === '' ? Infinity : Number(maxValue);
-
+  
     const filteredData: ChartData = {
-      datasetOne: originalChartData.datasetOne.map(value => (value >= min && value <= max ? value : null)),
-      datasetTwo: originalChartData.datasetTwo.map(value => (value >= min && value <= max ? value : null)),
+      datasetOne: originalChartData.datasetOne.filter(value => value >= min && value <= max),
+      datasetTwo: originalChartData.datasetTwo.filter(value => value >= min && value <= max),
     };
-
+  
     setFilteredChartData(filteredData);
   }, [originalChartData, minValue, maxValue]);
 
