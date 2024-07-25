@@ -1,5 +1,5 @@
 I ran into an issue:
-# Both error and success toasts are being displayed on page reload
+#### Both error and success toasts are being displayed on page reload
 1.added a type for the API response (ApiResponse) to better handle the structure of the data returned by the server. 
 fetchChartData function now checks both the HTTP status (response.ok) and the API status in the response body. This handles cases where the server might return a 200 OK status with an error in the body.
 
