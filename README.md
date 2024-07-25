@@ -1,6 +1,10 @@
-# Take Home Coding Exercise
+I ran into an issue:
+# Both error and success toasts are being displayed on page reload
+1.added a type for the API response (ApiResponse) to better handle the structure of the data returned by the server. 
+fetchChartData function now checks both the HTTP status (response.ok) and the API status in the response body. This handles cases where the server might return a 200 OK status with an error in the body.
 
-## Getting Started
+after googling:
+The useEffect hook is still being called twice, which is likely due to React's StrictMode in development. This is normal behavior and helps catch certain types of bugs. In production, it should only run once.
 
 ### Prerequisites
 - [pnpm >= 9.5](https://pnpm.io/installation)
@@ -15,6 +19,7 @@
   - Replace the mock data currently used by the BarChart component.
   - Fetch data from the `/api/data/chart-data endpoint` served from http://localhost:3001.
   - Ensure that the BarChart component displays this data.
+
 2. Toast Notifications 
   - Implement the `renderToast` method for the `ToastProvider` in `src/ui/providers/toast/toast.tsx`.
   - Display a toast message using the existing Toast component in `src/ui/components/Toast`. 
