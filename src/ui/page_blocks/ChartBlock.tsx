@@ -2,11 +2,13 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { BarChart } from '../components/Chart';
 import { useToastContext } from '../providers/toast';
 
+// structure of chartdata
 interface ChartData {
   datasetOne: number[];
   datasetTwo: number[];
 }
 
+// expected structure of the API response
 interface ApiResponse {
   status: 'success' | 'error';
   message: string;
@@ -16,11 +18,17 @@ interface ApiResponse {
 export function ChartBlock() {
   const [originalChartData, setOriginalChartData] = useState<ChartData | null>(null);
   const [filteredChartData, setFilteredChartData] = useState<ChartData | null>(null);
+  
+  // manage loading status
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  
   const [minValue, setMinValue] = useState<number | ''>('');
   const [maxValue, setMaxValue] = useState<number | ''>('');
+  
+  // access the toast functionality
   const { renderToast } = useToastContext();
 
+  // fetch chart data from the API
   const fetchChartData = useCallback(async () => {
     setIsLoading(true);
     try {
@@ -36,6 +44,7 @@ export function ChartBlock() {
       }
 
       if (responseData.status === 'success' && responseData.data) {
+        // Set both original and filtered data to the fetched data initially
         setOriginalChartData(responseData.data);
         setFilteredChartData(responseData.data);
         renderToast('success', 'Chart data loaded successfully');
@@ -54,34 +63,40 @@ export function ChartBlock() {
     fetchChartData();
   }, [fetchChartData]);
 
+  // filter the chart data based on min and max values
   const filterData = useCallback(() => {
     if (!originalChartData) return;
-  
+
     const min = minValue === '' ? -Infinity : Number(minValue);
     const max = maxValue === '' ? Infinity : Number(maxValue);
-  
+
+    // Filter out values that are outside the min-max range
     const filteredData: ChartData = {
       datasetOne: originalChartData.datasetOne.filter(value => value >= min && value <= max),
       datasetTwo: originalChartData.datasetTwo.filter(value => value >= min && value <= max),
     };
-  
+
     setFilteredChartData(filteredData);
   }, [originalChartData, minValue, maxValue]);
 
+  // filtering when min or max values change
   useEffect(() => {
     filterData();
   }, [filterData]);
 
+  // min value input changes
   const handleMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value === '' ? '' : Number(e.target.value);
     setMinValue(value);
   };
 
+  //  max value input changes
   const handleMaxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value === '' ? '' : Number(e.target.value);
     setMaxValue(value);
   };
 
+  // resetting the chart to its original state
   const handleReset = () => {
     setMinValue('');
     setMaxValue('');
@@ -94,27 +109,16 @@ export function ChartBlock() {
       <div className='mb-12 flex items-center'>
         <div className='flex flex-col mx-4'>
           <span className='text-sm'>Min</span>
-          <input
-            type='number'
-            className='w-24 h-8 text-sm'
-            value={minValue}
-            onChange={handleMinChange}
-          />
+          <input type='number' className='w-24 h-8 text-sm' value={minValue} onChange={handleMinChange} />
         </div>
         <div className='flex flex-col mx-4'>
           <span className='text-sm'>Max</span>
-          <input
-            type='number'
-            className='w-24 h-8 text-sm'
-            value={maxValue}
-            onChange={handleMaxChange}
-          />
+          <input type='number' className='w-24 h-8 text-sm' value={maxValue} onChange={handleMaxChange} />
         </div>
         <div className='flex flex-col mx-4 pt-4 w-100'>
-          <button 
+          <button
             className='bg-blue-600 flex justify-center items-center h-10 text-center text-white border focus:outline-none focus:ring-4 font-sm rounded-lg text-sm px-5 py-1.9'
-            onClick={handleReset}
-          >
+            onClick={handleReset}>
             Reset
           </button>
         </div>
